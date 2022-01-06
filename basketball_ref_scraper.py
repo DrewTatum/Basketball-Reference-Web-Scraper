@@ -6,8 +6,11 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 
-# Dataset URL (2020-2021 NBA Player Total Stats) From basketball-reference.com
-br_url = urllib.request.urlopen('https://www.basketball-reference.com/leagues/NBA_2021_totals.html#totals_stats::1')
+year = str(input('NBA season end year: ').strip())
+year_url = 'https://www.basketball-reference.com/leagues/NBA_' + year + '_totals.html#totals_stats::1'
+
+# Dataset URL (year_url-1 to year_url NBA Player Total Stats) From basketball-reference.com
+br_url = urllib.request.urlopen(year_url)
 br_raw = br_url.read()
 
 # Scraping Static Web data
@@ -44,7 +47,6 @@ blk_pattern = re.compile('"blk">(\d*)<')
 tov_pattern = re.compile('"tov">(\d*)<')
 pf_pattern = re.compile('"pf">(\d*)<')
 pts_pattern = re.compile('"pts">(\d*)<')
-
 
 basketball_reference_data = []
 
@@ -104,9 +106,9 @@ for column in basketball_df.columns:
         basketball_df[column] = basketball_df[column].astype('string')
 
 # Saving as txt file if needed
-check_save = input('Would you like to save the table as a text file y/n ').lower()
+check_save = input('Would you like to save the table as a text file y/n ').lower().strip()
 if check_save == 'y':
-    outfile = open('br_data.txt', 'w')  # basketball reference data
+    outfile = open(year + '_br_data.txt', 'w')  # basketball reference data
     for player in basketball_df.values:
         for attr in player:
             outfile.write(str(attr) + ' ')
